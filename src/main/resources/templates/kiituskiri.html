@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiituskiri</title>
+    <style>
+
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            background: url("/backgrounds/VHK_kiitus_põhi_2020.jpg") no-repeat;
+            background-size: cover;
+            padding: 0;
+            margin: 0;
+        }
+
+
+        p {
+            text-align: center;
+            margin:0 auto;
+            max-width: 8cm;
+        }
+    </style>
+</head>
+<body>
+<p style="font-size: 26pt;padding-top: 10cm">
+    Kiituskiri
+</p>
+<p style="font-size: 18pt;margin-bottom: 0.3cm" th:text="${student.eesnimi}">
+
+</p>
+<p style="font-size: 18pt;margin-top: 0" th:text="${student.perekonnanimi}">
+
+</p>
+
+
+<p style="font-size: 11pt; padding-top: 2cm; height: 5cm" th:text="${msg}">
+</p>
+
+<p style="font-size: 11pt; padding-top: 2cm" th:text="${signature}">
+</p>
+</body>
+</html>

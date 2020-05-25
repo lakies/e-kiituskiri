@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+
+    <style>
+        #studentName .v-toolbar__content {
+            height: auto !important;
+        }
+
+        #studentName .v-toolbar__extension {
+            height: auto !important;
+        }
+
+        #studentName {
+            height: auto !important;
+        }
+    </style>
+
+</head>
+<body>
+<div id="app">
+    <v-app>
+        <v-content>
+            <v-container fluid>
+                <v-app-bar>
+                    <!--                    <v-img src="http://vhk.ee/logo.jpg"></v-img>-->
+                    <v-toolbar-title>E-kiituskiri</v-toolbar-title>
+                </v-app-bar>
+
+                <v-card>
+                    <v-row>
+                        <v-col md="6"
+                               sm="12">
+                            <v-row>
+                                <v-col
+                                        class="py-2"
+                                >
+                                    <v-row>
+                                        <v-col class="ma-3 ml-8" cols="2">
+                                            <p style="font-size: 16px; margin-bottom: 0">Kool:</p>
+                                        </v-col>
+                                        <v-col>
+                                            <v-btn-toggle
+                                                    v-model="kool"
+                                                    color="primary"
+
+                                                    mandatory
+                                            >
+                                                <v-btn value="pk" outlined>
+                                                    VHK Põhikool
+                                                </v-btn>
+
+                                                <v-btn value="pmk" outlined>
+                                                    Püha Miikaeli Kool
+                                                </v-btn>
+                                            </v-btn-toggle>
+                                        </v-col>
+                                    </v-row>
+
+                                    <v-row>
+                                        <v-col cols="2" class="ma-3 ml-8 mt-5">
+                                            <p style="font-size: 16px; margin-bottom: 0">Klass:</p>
+                                        </v-col>
+                                        <v-col cols="2" class="pb-0">
+                                            <v-text-field
+                                                    label="number"
+                                                    v-model="klass.nr"
+                                                    type="number"
+                                                    min="1"
+                                                    max="9"
+                                            ></v-text-field>
+                                        </v-col>
+                                        <v-col cols="3" class="pb-0">
+                                            <v-select
+                                                    label="tähis"
+                                                    v-model="klass.tahis"
+                                                    :items="tahised"
+                                            ></v-select>
+                                        </v-col>
+                                    </v-row>
+
+                                    <v-row v-show="students.length > 0">
+                                        <v-col class="ma-3 ml-8 mt-3" cols="2">
+                                            <p style="font-size: 16px; margin-bottom: 0">Õpilane:</p>
+                                        </v-col>
+                                        <v-col cols="8" class="pt-0">
+                                            <v-tooltip
+                                                    top
+                                                    nudge-bottom="20"
+                                                    nudge-left="30"
+
+                                            >
+                                                <template
+                                                        v-slot:activator="{on}"
+                                                >
+                                                    <v-select
+                                                            class="pr-8"
+                                                            :items="opilased"
+                                                            v-on="on"
+                                                            v-model="selected"
+                                                            hide-details
+                                                    >
+
+                                                    </v-select>
+                                                </template>
+                                                <span>blabla</span>
+                                            </v-tooltip>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                            <v-divider v-if="selected" class="ma-2"></v-divider>
+                            <v-row
+                                    v-if="selected"
+                            >
+                                <v-col class="pt-0">
+                                    <v-app-bar elevation="0" style="background-color: white" id="studentName">
+                                        <!--                    <v-img src="http://vhk.ee/logo.jpg"></v-img>-->
+                                        <v-toolbar-title>{{ studentMap[selected].eesnimi + " " +
+                                            studentMap[selected].perekonnanimi }} <span class="ml-2"
+                                                                                        style="font-size: 1rem">{{studentMap[selected].klass}}</span>
+                                        </v-toolbar-title>
+                                    </v-app-bar>
+                                </v-col>
+                            </v-row>
+
+                            <v-row v-if="selected" class="pl-4 pb-0">
+                                <v-col cols="12" class="pb-0">
+                                    <v-textarea
+                                            label="Kiituskirja tekst"
+                                            v-model="val.text"
+                                            rows="4"
+                                            counter="1000"
+                                            outlined
+                                    />
+                                </v-col>
+                            </v-row>
+                            <v-row v-if="selected" class="pl-4 pt-0 pb-8">
+                                <p class="pl-4 pt-5" style="font-size: 16px; margin-bottom: 0">Õpetaja nimi:</p>
+                                <v-col cols="6" class="pb-0 pt-0">
+                                    <v-text-field
+                                            hide-details
+                                            v-model="val.signature"
+                                            label="nimi"
+                                            single-line
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row v-if="selected" class="pl-4">
+                                <v-col>
+                                    <v-btn color="primary">
+                                        Saada
+                                        <v-icon small class="pl-2">mdi-send</v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                        <v-col md="6"
+                               sm="12"
+                               style="position:relative">
+                            <v-img :src="imgSrc"
+                                   @load="overlay = false"
+                            ></v-img>
+                            <v-overlay
+                                    :absolute="true"
+                                    :value="overlay"
+                            >
+                                <v-progress-circular indeterminate size="64"></v-progress-circular>
+                            </v-overlay>
+                        </v-col>
+                    </v-row>
+
+                </v-card>
+            </v-container>
+        </v-content>
+    </v-app>
+</div>
+</body>
+<script>
+    new Vue({
+        vuetify: new Vuetify(),
+        el: '#app',
+        data() {
+            return {
+                roles: null,
+                kool: "pk",
+
+                klass: {
+                    nr: 1,
+                    tahis: "",
+                },
+
+                klassid: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                koiktahised: {
+                    "pk": ["p", "t", "a", "b", "c", "d", "e"],
+                    "pmk": ["pmp", "pmt"]
+                },
+
+                students: [],
+
+                selected: null,
+
+                val: {
+                    text: "",
+                    signature: window.localStorage.getItem("opetajaNimi"),
+                },
+
+                imgSrc: "/backgrounds/VHK_kiitus_põhi_2020.jpg",
+
+                overlay: false,
+                timeout: null
+
+
+            }
+        },
+        mounted() {
+
+        },
+
+        computed: {
+            tahised() {
+                return this.koiktahised[this.kool];
+            },
+
+            opilased() {
+                return this.students.map(s => {
+                    return {
+                        text: s.eesnimi + " " + s.perekonnanimi,
+                        value: s.id
+                    }
+                })
+            },
+
+            studentMap() {
+                let map = {};
+
+                for (const student of this.students) {
+                    map[student.id] = student;
+                }
+
+                return map;
+            },
+        },
+
+        methods: {
+            loadPicture() {
+                if (this.timeout !== null) {
+                    window.clearTimeout(this.timeout);
+                    this.timeout = null;
+                }
+
+                this.timeout = setTimeout(() => {
+                    this.overlay = true;
+                    this.imgSrc = this.selected == null ? '/backgrounds/VHK_kiitus_põhi_2020.jpg' : '/kiituspng?studentId='
+                        + this.selected + '&msg='
+                        + encodeURI(this.val.text) + '&signature='
+                        + encodeURI(this.val.signature)
+                }, 500);
+            }
+        },
+
+        watch: {
+            kool() {
+                this.klass.tahis = "";
+                this.students = [];
+                this.selected = null;
+                this.imgSrc = '/backgrounds/VHK_kiitus_põhi_2020.jpg';
+                this.val.text = "";
+            },
+
+            selected() {
+                this.loadPicture();
+            },
+
+            klass: {
+                deep: true,
+
+                handler() {
+                    if (!this.klass.nr || !this.klass.tahis)
+                        return;
+
+                    axios.get(`/api/v1/students?klass=${this.klass.nr}&tahis=${this.klass.tahis}`, {withCredentials: true})
+                        .then(res => {
+                            this.students = res.data;
+                        })
+                }
+            },
+
+            val: {
+                deep: true,
+
+                handler() {
+                    window.localStorage.setItem("opetajaNimi", this.val.signature);
+
+                    this.loadPicture();
+                }
+            }
+        }
+    })
+</script>
+</html>

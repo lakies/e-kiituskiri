@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <v-app>
+        <v-content>
+            <v-container class="fill-height" fluid style="width: 400px">
+                <v-row align="center" justify="center">
+                    <v-col>
+                        <v-card class="mx-auto">
+                            <v-toolbar color="primary" dark flat>
+                                <v-toolbar-title>Login</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-form ref="form" v-model="valid">
+                                    <v-text-field
+                                            label="Username"
+                                            v-model="username"
+                                            prepend-icon="mdi-account"
+                                            type="text"
+                                            required
+                                    ></v-text-field>
+
+                                    <v-text-field
+                                            label="Password"
+                                            v-model="password"
+                                            prepend-icon="mdi-lock"
+                                            type="password"
+                                            required
+                                    ></v-text-field>
+                                </v-form>
+                            </v-card-text>
+                            <v-card-actions>
+                                <div class="flex-grow-1"></div>
+                                <v-btn color="primary" :disabled="!valid" @click="doLogin">Login</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                        <v-snackbar v-model="snackbar" bottom>
+                            {{ errorMessage }}
+                        </v-snackbar>
+                    </v-col>
+                </v-row>
+            </v-container>
+
+        </v-content>
+    </v-app>
+</div>
+<script>
+    new Vue({
+        vuetify: new Vuetify(),
+        el: '#app',
+        data() {
+            return {
+                username: "",
+                password: "",
+                snackbar: false,
+                valid: false,
+                errorMessage: ""
+            }
+        },
+        mounted() {
+            document.getElementById('app').onkeydown = (e) => {
+                if(e.key === "Enter"){
+                    this.doLogin();
+                }
+            };
+        },
+
+        methods: {
+            doLogin() {
+                axios
+                    .post("/login", {username: this.username, password: this.password})
+                    .then(() => {
+                        document.location = "/"
+                    })
+                    .catch(() => {
+                        this.snackbar = true;
+                        this.errorMessage = "Username/password not correct";
+                    })
+            }
+        }
+    })
+</script>
+</body>
+</html>

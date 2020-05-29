@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         ApplicationUser applicationUser = new ApplicationUser();
-        applicationUser.setPassword("$2a$10$iBi/VyNHp.RHGZbUCmC53e3r8ojRW.YCNhI5YDJNqVEubydzqjjK.");
+        applicationUser.setPassword("$2a$10$h/EBPgsWk91.u0s6e7ewRusJ8.u.uj/SFdJGrixFu1N/oa.R3BkRq");
         applicationUser.setUsername("kasutaja");
 
         return new User(applicationUser.getUsername(), applicationUser.getPassword(), emptyList());

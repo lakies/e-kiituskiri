@@ -31,6 +31,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
 
+        if (req.getCookies() == null) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         String token = Arrays.stream(req.getCookies())
                 .filter(cookie -> "accessJwt".equals(cookie.getName()))
                 .map(Cookie::getValue)

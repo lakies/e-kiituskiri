@@ -18,12 +18,6 @@ public class ApiController {
 
     @GetMapping("/students")
     public List<Student> test(@RequestParam String klass, @RequestParam String tahis) {
-        ArrayList<Student> students = new ArrayList<>();
-
-        for (Student student : repository.findAll()) {
-            students.add(student);
-        }
-
-        return students;
+        return new ArrayList<>(repository.findAllByKlass(klass + tahis));
     }
 }

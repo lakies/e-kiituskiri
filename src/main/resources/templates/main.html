@@ -92,27 +92,26 @@
                                             <p style="font-size: 16px; margin-bottom: 0">Õpilane:</p>
                                         </v-col>
                                         <v-col cols="8" class="pt-0">
-                                            <v-tooltip
-                                                    top
-                                                    nudge-bottom="20"
-                                                    nudge-left="30"
-
+                                            <v-select
+                                                    class="pr-8"
+                                                    :items="opilased"
+                                                    v-on="on"
+                                                    v-model="selected"
+                                                    hide-details
                                             >
-                                                <template
-                                                        v-slot:activator="{on}"
-                                                >
-                                                    <v-select
-                                                            class="pr-8"
-                                                            :items="opilased"
-                                                            v-on="on"
-                                                            v-model="selected"
-                                                            hide-details
-                                                    >
 
-                                                    </v-select>
-                                                </template>
-                                                <span>blabla</span>
-                                            </v-tooltip>
+                                            </v-select>
+<!--                                            <v-tooltip-->
+<!--                                                    top-->
+<!--                                                    nudge-bottom="20"-->
+<!--                                                    nudge-left="30"-->
+
+<!--                                            >-->
+<!--                                                <template-->
+<!--                                                        v-slot:activator="{on}"-->
+<!--                                                >-->
+<!--                                                </template>-->
+<!--                                            </v-tooltip>-->
                                         </v-col>
                                     </v-row>
                                 </v-col>

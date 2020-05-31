@@ -2,6 +2,8 @@ package com.vhk.kirjad.controllers;
 
 import com.vhk.kirjad.jpa.Student;
 import com.vhk.kirjad.jpa.StudentRepository;
+import com.vhk.kirjad.utils.FileManager;
+import com.vhk.kirjad.utils.LetterParams;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,7 +34,7 @@ public class WebController {
     private StudentRepository studentRepository;
 
     @GetMapping("/kiituskiri")
-    public String kiituskiri(@RequestParam String studentId, @RequestParam String msg, @RequestParam String signature, Model model) {
+    public String kiituskiri(@RequestParam String studentId, @RequestParam String msg, @RequestParam String type, @RequestParam String date, @RequestParam String signature, Model model) {
         Student student = studentRepository.findById(studentId).orElse(null);
 
         if (student == null) {
@@ -40,64 +43,35 @@ public class WebController {
 
         model.addAttribute("student", student);
 
-        model.addAttribute("msg", msg);
+        model.addAttribute("msg", URLDecoder.decode(msg, StandardCharsets.UTF_8)
+                .replace("<", "%3C")
+                .replace(">", "%3E")
+                .replace("\n", "<br />"));
 
         model.addAttribute("signature", signature);
+
+        model.addAttribute("type", URLDecoder.decode(type, StandardCharsets.UTF_8));
+
+        model.addAttribute("date", date);
 
         return "kiituskiri";
     }
 
     @Autowired
-    private HttpServletRequest request;
+    private FileManager fileManager;
 
-    @GetMapping("/kiituspng")
+    @GetMapping("/kiitus.png")
     public @ResponseBody
-    byte[] getImage(@RequestParam String studentId, @RequestParam String msg, @RequestParam String signature) throws IOException, InterruptedException {
+    byte[] getImage(LetterParams params) throws IOException, InterruptedException {
 
-        Cookie accessCookie = Arrays.stream(request.getCookies()).filter(cookie -> "accessJwt".equals(cookie.getName())).findFirst().orElse(null);
+        File pdf = fileManager.createPdf(params);
+        if (pdf == null) return null;
 
-        if (accessCookie == null) {
-            return null;
-        }
-
-        File directory = new File("./tmp");
-        if (! directory.exists()){
-            directory.mkdir();
-        }
-
-        String filename = Long.toString(Instant.now().toEpochMilli());
-
-        String filepath = String.format("%s%s%s", directory.getAbsolutePath(), File.separator, filename);
-
-//        String requestURI = request.getRequestURI();
-
-        String htmltopdf = String.format("wkhtmltopdf " +
-                        "--disable-smart-shrinking" +
-                        " -L 0 -R 0 -B 0 -T 0" +
-                        " --cookie accessJwt %s " +
-                        "\"http://localhost:8080/kiituskiri?studentId=%s&msg=%s&signature=%s\" " +
-                        "%s.pdf", accessCookie.getValue(),
-                URLEncoder.encode(studentId, StandardCharsets.UTF_8),
-                URLEncoder.encode(msg, StandardCharsets.UTF_8),
-                URLEncoder.encode(signature, StandardCharsets.UTF_8),
-                filepath);
-
-        Runtime runtime = Runtime.getRuntime();
-        long l = System.currentTimeMillis();
-        runtime.exec(htmltopdf).waitFor();
-
-        System.out.println(System.currentTimeMillis() - l);
-
-        String convert = String.format("magick -density 150 %s.pdf -quality 90 -resize 700x700 %s.png", filepath, filepath);
-        l = System.currentTimeMillis();
-
-        runtime.exec(convert).waitFor();
-        System.out.println(System.currentTimeMillis() - l);
-        File png = new File(filepath + ".png");
+        File png = fileManager.createPng(pdf);
 
         byte[] bytes = Files.readAllBytes(png.toPath());
 
-        new File(filepath + ".pdf").delete();
+        pdf.delete();
         png.delete();
 
         return bytes;

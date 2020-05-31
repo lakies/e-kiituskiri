@@ -45,7 +45,7 @@ public class MailSender {
         bodyPart.setContent(htmlMessage, "text/html");
 
         MimeBodyPart imagePart = new MimeBodyPart();
-        imagePart.setHeader("Content-ID", "hpahvanptq23456ht34n");
+        imagePart.setHeader("Content-ID", "<hpahvanptq23456ht34n>");
         imagePart.setDisposition(MimeBodyPart.INLINE);
 
         File pdf = fileManager.createPdf(params);

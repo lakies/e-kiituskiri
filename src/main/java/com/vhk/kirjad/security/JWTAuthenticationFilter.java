@@ -3,6 +3,7 @@ package com.vhk.kirjad.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.util.Date;
 
 import static com.vhk.kirjad.security.Constants.*;
 
+@Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
 
@@ -61,6 +63,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         accessJwt.setHttpOnly(true);
 
         res.addCookie(accessJwt);
+
+        log.info(String.format("Cookie set for new user %s", req.getRemoteAddr()));
+
 //        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
     }
 }

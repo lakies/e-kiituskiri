@@ -2,6 +2,7 @@ package com.vhk.kirjad.utils.email;
 
 import com.vhk.kirjad.utils.FileManager;
 import com.vhk.kirjad.utils.LetterParams;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class MailSender {
 
@@ -63,11 +65,19 @@ public class MailSender {
 
         message.setContent(multipart);
 
-        send(message);
+        log.info(String.format("Sending email to %s", message.getAllRecipients()[0].toString()));
 
-        pdf.delete();
-        png.delete();
+        try {
+            send(message);
 
+            log.info("Email sent");
+        } catch (Exception e) {
+            log.error("Email failed to send.");
+            e.printStackTrace();
+        } finally {
+            pdf.delete();
+            png.delete();
+        }
     }
 
     private void send(Message message) throws MessagingException {

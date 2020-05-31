@@ -1,5 +1,6 @@
 package com.vhk.kirjad.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 
+@Slf4j
 @Component
 public class FileManager {
 
@@ -24,7 +26,11 @@ public class FileManager {
 
         Runtime runtime = Runtime.getRuntime();
         runtime.exec(convert).waitFor();
-        return new File(pdf.getAbsolutePath() + ".png");
+        File file = new File(pdf.getAbsolutePath() + ".png");
+
+        log.info(String.format("Png %s created", file.getName()));
+
+        return file;
     }
 
     public File createPdf(LetterParams params) throws InterruptedException, IOException {
@@ -60,6 +66,10 @@ public class FileManager {
         runtime.exec(htmltopdf).waitFor();
 
         File pdf = new File(filepath + ".pdf");
+
+
+        log.info(String.format("Pdf %s created", pdf.getName()));
+
         return pdf;
     }
 }

@@ -4,6 +4,7 @@ import com.vhk.kirjad.jpa.Student;
 import com.vhk.kirjad.jpa.StudentRepository;
 import com.vhk.kirjad.utils.LetterParams;
 import com.vhk.kirjad.utils.email.MailSender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@Slf4j
 public class ApiController {
 
     @Autowired
@@ -29,6 +31,7 @@ public class ApiController {
 
     @PostMapping("/sendmail")
     public String sendEmail(@RequestBody LetterParams params) throws InterruptedException, MessagingException, IOException {
+        log.info(String.format("Request to send email: %s", params.toString()));
         mailSender.sendEmail(params);
         return "ok";
     }

@@ -28,7 +28,7 @@
         p {
             text-align: center;
             margin: 0 auto;
-            max-width: 8cm;
+            max-width: 9cm;
             font-family: Diavlomedium;
         }
 
@@ -61,11 +61,14 @@
 </p>
 
 
-<p style="font-size: 11pt; padding-top: 1.5cm; height: 5cm" th:utext="${msg}">
-</p>
+<div style="font-size: 11pt; padding-top: 1.5cm; height: 5cm">
+    <p th:utext="${msg}">
+
+    </p>
+    <p style="margin-right: 3.5cm; text-align: end; margin-top: 1cm" th:text="'Õp. ' + ${signature}"></p>
+</div>
 
 <div style="font-size: 11pt; padding-top: 1.5cm">
-    <p style="margin-right: 3.5cm; text-align: end" th:text="'Õp. ' + ${signature}"></p>
     <p style="margin-left: 3.5cm; text-align: start; padding-top: 0.7cm" th:text="${date}"></p>
 </div>
 </p>

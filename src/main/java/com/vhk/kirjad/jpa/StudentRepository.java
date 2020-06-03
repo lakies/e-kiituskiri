@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface StudentRepository extends CrudRepository<Student, String> {
 
-    Collection<Student> findAllByKlassOrderByPerekonnanimiEesnimi(String klass);
+    Collection<Student> findAllByKlassOrderByPerekonnanimi(String klass);
 
 }

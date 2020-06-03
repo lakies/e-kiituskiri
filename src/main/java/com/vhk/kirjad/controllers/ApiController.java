@@ -33,7 +33,7 @@ public class ApiController {
 
     @GetMapping("/students")
     public Collection<Student> test(@RequestParam String klass, @RequestParam String tahis) {
-        Collection<Student> allByKlass = repository.findAllByKlassOrderByPerekonnanimiEesnimi(klass + tahis);
+        Collection<Student> allByKlass = repository.findAllByKlassOrderByPerekonnanimi(klass + tahis);
         return allByKlass;
     }
 

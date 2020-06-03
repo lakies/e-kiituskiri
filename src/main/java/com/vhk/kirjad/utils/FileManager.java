@@ -53,7 +53,7 @@ public class FileManager {
                         "--disable-smart-shrinking" +
                         " -L 0 -R 0 -B 0 -T 0 --page-size A5" +
                         " --cookie accessJwt %s " +
-                        "\"http://localhost:8080/kiituskiri?studentId=%s&msg=%s&signature=%s&type=%s&date=%s\" " +
+                        "http://localhost:8080/kiituskiri?studentId=%s&msg=%s&signature=%s&type=%s&date=%s " +
                         "%s.pdf", accessCookie.getValue(),
                 URLEncoder.encode(params.getStudentId(), StandardCharsets.UTF_8),
                 URLEncoder.encode(params.getMsg(), StandardCharsets.UTF_8),

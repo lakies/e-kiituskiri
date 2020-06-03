@@ -154,11 +154,11 @@
                             </v-row>
                             <v-row v-if="selected" class="pl-4 pt-0 pb-8">
                                 <v-col
-                                        md="6"
-                                        sm="12"
+                                        cols="12"
+                                        class="pt-0"
                                 >
-                                    <v-row>
-                                        <p class="pl-4 pt-5" style="font-size: 16px; margin-bottom: 0">Õpetaja nimi:</p>
+                                    <v-row class="pt-0">
+                                        <p class="pl-4 pt-5" style="font-size: 16px; margin-bottom: 0">Õpetaja nimi (koos tiitliga):</p>
                                         <v-col cols="7" class="pb-0 pt-0">
                                             <v-text-field
                                                     hide-details
@@ -172,38 +172,85 @@
                                 <v-col
                                         md="6"
                                         sm="12"
+                                        class="pt-0"
                                 >
-                                    <v-row>
+                                    <v-row class="pt-0">
                                         <p class="pl-4 pt-5" style="font-size: 16px; margin-bottom: 0">Dokumendi
                                             tüüp:</p>
                                         <v-col cols="6" class="pb-0 pt-0">
                                             <v-select
                                                     hide-details
                                                     v-model="val.type"
-                                                    label="tüüp"
                                                     :items="types"
                                             ></v-select>
                                         </v-col>
                                     </v-row>
                                 </v-col>
+                                <v-col
+                                        md="6"
+                                        sm="12"
+                                        class="pt-0"
+                                >
+                                    <v-row class="pt-0">
+                                        <p class="pl-4 pt-5" style="font-size: 16px; margin-bottom: 0">Kuupäev:</p>
+                                        <v-col cols="7" class="pb-0 pt-0">
+                                            <v-text-field
+                                                    hide-details
+                                                    v-model="val.date"
+                                                    single-line
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
                             </v-row>
+
                             <v-row v-if="selected" class="pl-4">
                                 <v-col>
-                                    <v-tooltip top :disabled="!isSent">
-                                        <template v-slot:activator="{ on }">
-                                            <v-btn color="primary" @click="sendEmail" v-on="on"
-                                            >
-                                                Saada meilile
-                                                <v-fade-transition group hide-on-leave>
-                                                    <v-icon v-if="sent" small class="pl-2" key="1">mdi-check</v-icon>
-                                                    <v-icon v-else-if="!sending" small class="pl-2" key="2">mdi-email</v-icon>
-                                                    <v-progress-circular class="ml-2" v-else indeterminate
-                                                                         size="16" key="3"></v-progress-circular>
-                                                </v-fade-transition>
-                                            </v-btn>
-                                        </template>
-                                        <span>Email on juba saadetud sellele õpilasele</span>
-                                    </v-tooltip>
+                                    <v-btn color="primary" @click="sendEmail" v-if="!isSent"
+                                    >
+                                        Saada meilile
+                                        <v-fade-transition group hide-on-leave>
+                                            <v-icon v-if="isSent" small class="pl-2" key="1">mdi-email-open</v-icon>
+                                            <v-icon v-else-if="!sending" small class="pl-2" key="2">mdi-email</v-icon>
+                                            <v-progress-circular class="ml-2" v-else indeterminate
+                                                                 size="16" key="3"></v-progress-circular>
+                                        </v-fade-transition>
+                                    </v-btn>
+                                    <div v-else>
+                                        <v-dialog width="600" v-model="dialog">
+                                            <template v-slot:activator="{ on }">
+                                                <v-btn color="primary" v-on="on"
+                                                >
+                                                    Saada uuesti meilile
+                                                    <v-fade-transition group hide-on-leave>
+                                                        <v-progress-circular class="ml-2" v-if="sending" indeterminate
+                                                                             size="16" key="1"></v-progress-circular>
+                                                        <v-icon v-if="isSent" small class="pl-2" key="2">mdi-email-open
+                                                        </v-icon>
+                                                        <v-icon v-else small class="pl-2" key="3">
+                                                            mdi-email
+                                                        </v-icon>
+                                                    </v-fade-transition>
+                                                </v-btn>
+                                            </template>
+                                            <v-card style="text-align: center">
+                                                <v-card-title style="text-align: center">
+                                                    Palun kinnita, et soovid uuesti saata kirja õpilasele
+                                                </v-card-title>
+                                                <v-card-text>
+                                                    Õpilane on juba kiituskirja saanud
+                                                </v-card-text>
+                                                <v-divider></v-divider>
+                                                <v-btn color="primary" @click="dialog = false; sendEmail()" class="ma-4"
+                                                >
+                                                    Kinnita
+                                                </v-btn>
+                                            </v-card>
+                                        </v-dialog>
+
+                                    </div>
+
+
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -257,6 +304,7 @@
                 selected: null,
 
                 val: {
+                    date: null,
                     month: null,
                     year: null,
                     type: "kiituskiri",
@@ -271,12 +319,13 @@
                 d: undefined,
 
 
-                imgSrc: "/backgrounds/kiitus_pohi.jpg",
+                imgSrc: "/backgrounds/kiitus_pohi_vhk.jpg",
 
                 overlay: false,
                 timeout: null,
                 sending: false,
                 sent: false,
+                dialog: false
 
 
             }
@@ -285,6 +334,7 @@
             let d = new Date();
             this.val.month = this.monthNames[d.getMonth()];
             this.val.year = d.getFullYear();
+            this.val.date = this.val.month + " " + this.val.year;
         },
 
         computed: {
@@ -357,11 +407,11 @@
 
                 this.timeout = setTimeout(() => {
                     this.overlay = true;
-                    this.imgSrc = this.selected == null ? '/backgrounds/kiitus_pohi.jpg' : '/kiitus.png?studentId='
+                    this.imgSrc = this.selected == null ? '/backgrounds/kiitus_pohi_vhk.jpg' : '/kiitus.png?studentId='
                         + this.selected
                         + '&msg=' + encodeURI(this.val.text)
                         + '&signature=' + encodeURI(this.val.signature)
-                        + '&date=' + encodeURI(this.val.month + " " + this.val.year)
+                        + '&date=' + encodeURI(this.val.date)
                         + '&type=' + encodeURI(this.val.type[0].toUpperCase() + this.val.type.slice(1));
                 }, 500);
             },
@@ -384,12 +434,19 @@
                 this.klass.tahis = "";
                 this.students = [];
                 this.selected = null;
-                this.imgSrc = '/backgrounds/kiitus_pohi.jpg';
+                this.imgSrc = '/backgrounds/kiitus_pohi_vhk.jpg';
                 this.val.text = "";
             },
 
             selected() {
-                this.loadPicture();
+                let filter = this.students.filter(value => value.id === this.selected)[0];
+
+                if (filter.kiitus) {
+                    this.val.text = filter.kiitus.kiituskiri;
+                } else {
+                    this.loadPicture();
+                }
+
             },
 
             klass: {

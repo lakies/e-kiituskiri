@@ -2,6 +2,7 @@ package com.vhk.kirjad.jpa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Kiitus implements Serializable {
     @JoinColumn(name = "lapse_id")
     @MapsId
     @JsonIgnore
+    @ToString.Exclude
     private Student student;
 
     private String kiituskiri;

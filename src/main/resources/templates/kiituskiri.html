@@ -18,17 +18,23 @@
         body {
             width: 14.8cm;
             height: 21cm;
-            background: url("/backgrounds/kiitus_pohi.jpg") no-repeat;
             background-size: cover;
             padding: 0;
             margin: 0;
         }
 
+        body.vhk {
+            background: url("/backgrounds/kiitus_pohi_vhk.jpg") no-repeat;
+        }
+
+        body.pmk {
+            background: url("/backgrounds/kiitus_pohi_pmk.jpg") no-repeat;
+        }
 
         p {
             text-align: center;
             margin: 0 auto;
-            max-width: 9cm;
+            max-width: 8cm;
             font-family: Diavlomedium;
         }
 
@@ -50,7 +56,7 @@
         }
     </style>
 </head>
-<body>
+<body th:classappend='${student.klass.endsWith("pmp") || student.klass.endsWith("pmt")} ? pmk : vhk'>
 <p style="font-size: 26pt;padding-top: 5cm" class="header" th:text="${type}">
 </p>
 <p style="font-size: 18pt;margin-bottom: 0.1cm; margin-top: 0.4cm" th:text="${student.eesnimi}">
@@ -65,7 +71,7 @@
     <p th:utext="${msg}">
 
     </p>
-    <p style="margin-right: 3.5cm; text-align: end; margin-top: 1cm" th:text="'Õp. ' + ${signature}"></p>
+    <p style="margin-right: 3.5cm; text-align: end; margin-top: 1cm; max-width: 4cm" th:text="${signature}"></p>
 </div>
 
 <div style="font-size: 11pt; padding-top: 1.5cm">

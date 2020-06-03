@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -31,8 +32,9 @@ public class ApiController {
     private MailSender mailSender;
 
     @GetMapping("/students")
-    public List<Student> test(@RequestParam String klass, @RequestParam String tahis) {
-        return new ArrayList<>(repository.findAllByKlass(klass + tahis));
+    public Collection<Student> test(@RequestParam String klass, @RequestParam String tahis) {
+        Collection<Student> allByKlass = repository.findAllByKlass(klass + tahis);
+        return allByKlass;
     }
 
     @PostMapping("/sendmail")
@@ -52,7 +54,7 @@ public class ApiController {
 
         kiitus.setStudent(student);
         
-//        mailSender.sendEmail(params);
+        mailSender.sendEmail(params);
 
         kiitus.setSaadetud(true);
         kiitus.setKiituskiri(params.getMsg());

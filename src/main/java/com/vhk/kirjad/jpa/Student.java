@@ -3,6 +3,7 @@ package com.vhk.kirjad.jpa;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @Entity
@@ -21,4 +22,7 @@ public class Student {
 
     @OneToOne(mappedBy = "student")
     private Kiitus kiitus;
+
+    @OneToMany(mappedBy = "student")
+    private Collection<Parent> parents;
 }

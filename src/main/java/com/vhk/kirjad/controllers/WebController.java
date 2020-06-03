@@ -28,8 +28,8 @@ public class WebController {
     private StudentRepository studentRepository;
 
     @GetMapping("/kiituskiri")
-    public String kiituskiri(@RequestParam String studentId, @RequestParam String msg, @RequestParam String type, @RequestParam String date, @RequestParam String signature, Model model) {
-        Student student = studentRepository.findById(studentId).orElse(null);
+    public String kiituskiri(LetterParams params, Model model) {
+        Student student = studentRepository.findById(params.getStudentId()).orElse(null);
 
         if (student == null) {
             throw new NotFoundException();
@@ -37,16 +37,15 @@ public class WebController {
 
         model.addAttribute("student", student);
 
-        model.addAttribute("msg", URLDecoder.decode(msg, StandardCharsets.UTF_8)
+        model.addAttribute("msg", URLDecoder.decode(params.getMsg(), StandardCharsets.UTF_8)
                 .replace("<", "%3C")
                 .replace(">", "%3E")
                 .replace("\n", "<br />"));
 
-        model.addAttribute("signature", signature);
+        model.addAttribute("signature", params.getSignature());
+        model.addAttribute("type", URLDecoder.decode(params.getType(), StandardCharsets.UTF_8));
 
-        model.addAttribute("type", URLDecoder.decode(type, StandardCharsets.UTF_8));
-
-        model.addAttribute("date", date);
+        model.addAttribute("date", params.getDate());
 
         return "kiituskiri";
     }

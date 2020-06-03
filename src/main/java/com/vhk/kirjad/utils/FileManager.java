@@ -22,7 +22,7 @@ public class FileManager {
     private HttpServletRequest request;
 
     public File createPng(File pdf) throws InterruptedException, IOException {
-        String convert = String.format("convert -density 150 %s -quality 90 %s.png", pdf.getAbsolutePath(), pdf.getAbsolutePath());
+        String convert = String.format("magick -density 150 %s -quality 90 %s.png", pdf.getAbsolutePath(), pdf.getAbsolutePath());
 
         Runtime runtime = Runtime.getRuntime();
         runtime.exec(convert).waitFor();

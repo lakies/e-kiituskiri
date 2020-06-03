@@ -8,7 +8,7 @@ import java.util.Properties;
 @Component
 public class EmailCredentialProvider {
     private final String username = "adrian@colleduc.ee";
-    private final String address = "adrian@colleduc.ee";
+//    private final String address = "adrian@colleduc.ee";
 
     public String getUsername() {
         return username;
@@ -26,7 +26,7 @@ public class EmailCredentialProvider {
         return properties;
     }
 
-    public InternetAddress getInternetAddress() {
+    public InternetAddress getInternetAddress(String address) {
         try {
             return new InternetAddress(address);
         } catch (AddressException e) {

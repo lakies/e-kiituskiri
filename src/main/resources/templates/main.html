@@ -439,6 +439,10 @@
             },
 
             selected() {
+                if (!this.selected) {
+                    return;
+                }
+
                 let filter = this.students.filter(value => value.id === this.selected)[0];
 
                 if (filter.kiitus) {
@@ -453,6 +457,10 @@
                 deep: true,
 
                 handler() {
+
+                    this.selected = null;
+                    this.val.text = "";
+
                     if (!this.klass.nr || !this.klass.tahis)
                         return;
 

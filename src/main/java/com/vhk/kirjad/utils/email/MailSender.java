@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,17 +61,18 @@ public class MailSender {
 
             message.setSubject(params.getType());
 
-            Multipart multipart = new MimeMultipart();
+            Multipart multipart = new MimeMultipart("related");
+            String cid = generateContentId("img");
 
-            String htmlMessage = "<html>";
-            htmlMessage += "<img src=\"cid:hpahvanptq23456ht34n\" />";
-            htmlMessage += "</html>";
+            String htmlMessage = "<html><body>";
+            htmlMessage += String.format("<img src=\"cid:%s\" />", cid);
+            htmlMessage += "</body></html>";
 
             MimeBodyPart bodyPart = new MimeBodyPart();
             bodyPart.setContent(htmlMessage, "text/html");
 
             MimeBodyPart imagePart = new MimeBodyPart();
-            imagePart.setHeader("Content-ID", "<hpahvanptq23456ht34n>");
+            imagePart.setHeader("Content-ID", String.format("<%s>", cid));
             imagePart.setDisposition(MimeBodyPart.INLINE);
 
             imagePart.attachFile(png);
@@ -90,7 +92,7 @@ public class MailSender {
             log.info(String.format("Sending email from %s to %s", message.getFrom()[0].toString(), message.getAllRecipients()[0].toString()));
 
             try {
-//                send(message);
+                send(message);
 
                 log.info("Email sent");
             } catch (Exception e) {
@@ -107,5 +109,9 @@ public class MailSender {
 
     private void send(Message message) throws MessagingException {
         Transport.send(message);
+    }
+
+    String generateContentId(String prefix) {
+        return String.format("%s-%s", prefix, UUID.randomUUID());
     }
 }

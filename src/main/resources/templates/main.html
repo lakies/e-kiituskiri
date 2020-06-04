@@ -92,7 +92,7 @@
                                             <p style="font-size: 16px; margin-bottom: 0">Õpilane:</p>
                                         </v-col>
                                         <v-col cols="8" class="pt-0">
-                                            <v-select
+                                            <v-autocomplete
                                                     class="pr-8"
                                                     :items="opilased"
                                                     v-model="selected"
@@ -110,7 +110,7 @@
                                                     </v-icon>
                                                 </template>
 
-                                            </v-select>
+                                            </v-autocomplete>
                                             <!--                                            <v-tooltip-->
                                             <!--                                                    top-->
                                             <!--                                                    nudge-bottom="20"-->
@@ -460,6 +460,7 @@
 
                     this.selected = null;
                     this.val.text = "";
+                    this.imgSrc = '/backgrounds/kiitus_pohi_vhk.jpg';
 
                     if (!this.klass.nr || !this.klass.tahis)
                         return;

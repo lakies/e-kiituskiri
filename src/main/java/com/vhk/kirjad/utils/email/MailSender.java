@@ -53,6 +53,11 @@ public class MailSender {
 
         for (String email : emails) {
 
+            if (email == null) {
+                log.info("Skipping null email");
+                continue;
+            }
+
             Message message = new MimeMessage(session);
             message.setFrom(credentialProvider
                     .getInternetAddress(student.getKlass().endsWith("pmp") || student.getKlass().endsWith("pmt") ?

@@ -94,12 +94,11 @@ public class MailSender {
 
             message.setContent(multipart);
 
-            log.info(String.format("Sending email from %s to %s", message.getFrom()[0].toString(), message.getAllRecipients()[0].toString()));
 
             try {
                 send(message);
 
-                log.info("Email sent");
+                log.info(String.format("Sent email from %s to %s", message.getFrom()[0].toString(), message.getAllRecipients()[0].toString()));
             } catch (Exception e) {
                 log.error("Email failed to send.");
                 e.printStackTrace();

@@ -48,7 +48,7 @@ public class WebController {
         if (nimi.length() > 13) {
             nimi = nimi.replace("<", "%3C")
                     .replace(">", "%3E")
-                    .replaceFirst("\n", "<br />");
+                    .replaceFirst(" ", "<br />");
         }
 
         model.addAttribute("signature", nimi);

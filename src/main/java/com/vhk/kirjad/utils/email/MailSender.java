@@ -53,10 +53,16 @@ public class MailSender {
 
         for (String email : emails) {
 
+            if (email == null) {
+                log.info("Skipping null email");
+                continue;
+            }
+
             Message message = new MimeMessage(session);
+            String fromAddress = student.getKlass().endsWith("pmp") || student.getKlass().endsWith("pmt") ?
+                    "pmk-tunnistus@pmk.edu.ee" : "vhk-tunnistus@vhk.ee";
             message.setFrom(credentialProvider
-                    .getInternetAddress(student.getKlass().endsWith("pmp") || student.getKlass().endsWith("pmt") ?
-                            "pmk-tunnistus@pmk.edu.ee" : "vhk-tunnistus@vhk.ee"));
+                    .getInternetAddress(fromAddress));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
 
             message.setSubject(params.getType());
@@ -89,12 +95,17 @@ public class MailSender {
 
             message.setContent(multipart);
 
-            log.info(String.format("Sending email from %s to %s", message.getFrom()[0].toString(), message.getAllRecipients()[0].toString()));
 
             try {
                 send(message);
 
-                log.info("Email sent");
+                List<String> toAddresses = new ArrayList<>();
+                Address[] recipients = message.getRecipients(Message.RecipientType.TO);
+                for (Address address : recipients) {
+                    toAddresses.add(address.toString());
+                }
+
+                log.info(String.format("Sent email from %s to %s", fromAddress, String.join(", ", toAddresses)));
             } catch (Exception e) {
                 log.error("Email failed to send.");
                 e.printStackTrace();

@@ -51,9 +51,11 @@ public class MailSender {
         File pdf = fileManager.createPdf(params);
         File png = fileManager.createPng(pdf);
 
+        ArrayList<String> failedAddresses = new ArrayList<>();
+
         for (String email : emails) {
 
-            if (email == null) {
+            if (email == null || "".equals(email)) {
                 log.info("Skipping null email");
                 continue;
             }
@@ -97,6 +99,7 @@ public class MailSender {
 
 
             try {
+
                 send(message);
 
                 List<String> toAddresses = new ArrayList<>();
@@ -108,9 +111,58 @@ public class MailSender {
                 log.info(String.format("Sent email from %s to %s", fromAddress, String.join(", ", toAddresses)));
             } catch (Exception e) {
                 log.error(String.format("Email failed to send: %s", e.getMessage()));
-                e.printStackTrace();
+
+                if (!"No recipient addresses".equals(e.getMessage()))
+                    failedAddresses.add(email);
             }
         }
+
+
+        if (failedAddresses.size() > 0) {
+            Message message = new MimeMessage(session);
+            String fromAddress = student.getKlass().endsWith("pmp") || student.getKlass().endsWith("pmt") ?
+                    "pmk-tunnistus@pmk.edu.ee" : "vhk-tunnistus@vhk.ee";
+            message.setFrom(credentialProvider
+                    .getInternetAddress(fromAddress));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("taniel@vhk.ee"));
+
+            message.setSubject("Kirja saatmine ebaõnnestus");
+
+            Multipart multipart = new MimeMultipart("related");
+            String cid = generateContentId("img");
+
+            String htmlMessage = "<html><body>";
+            htmlMessage += String.format("<p>Õpilane: %s, pk: %s</p>", student.getEesnimi() + " " + student.getPerekonnanimi(), student.getId());
+            htmlMessage += String.format("<p>Ebaõnnestunud aadressid: %s</p>", String.join(",", failedAddresses));
+            htmlMessage += String.format("<img src=\"cid:%s\" />", cid);
+            htmlMessage += "</body></html>";
+
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setContent(htmlMessage, "text/html");
+
+            MimeBodyPart imagePart = new MimeBodyPart();
+            imagePart.setHeader("Content-ID", String.format("<%s>", cid));
+            imagePart.setDisposition(MimeBodyPart.INLINE);
+
+            imagePart.attachFile(png);
+
+            multipart.addBodyPart(bodyPart);
+            multipart.addBodyPart(imagePart);
+
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            FileDataSource source = new FileDataSource(pdf);
+            attachmentPart.setDataHandler(new DataHandler(source));
+            attachmentPart.setFileName(pdf.getName());
+            multipart.addBodyPart(attachmentPart);
+
+
+            message.setContent(multipart);
+
+            log.info(String.format("Sending error email because the following addresses failed: %s", String.join(",", failedAddresses)));
+
+            send(message);
+        }
+
 
 
         pdf.delete();

@@ -107,7 +107,7 @@ public class MailSender {
 
                 log.info(String.format("Sent email from %s to %s", fromAddress, String.join(", ", toAddresses)));
             } catch (Exception e) {
-                log.error("Email failed to send.");
+                log.error(String.format("Email failed to send: %s", e.getMessage()));
                 e.printStackTrace();
             }
         }

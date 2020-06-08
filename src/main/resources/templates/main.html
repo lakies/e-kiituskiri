@@ -19,7 +19,7 @@
             height: auto !important;
         }
 
-        #studentName {
+        #studentName { 
             height: auto !important;
         }
     </style>
@@ -206,7 +206,7 @@
 
                             <v-row v-if="selected" class="pl-4">
                                 <v-col>
-                                    <v-btn color="primary" @click="sendEmail" v-if="!isSent"
+                                    <v-btn color="primary" @click="sendEmail" v-if="!isSent" :disabled="sending"
                                     >
                                         Saada meilile
                                         <v-fade-transition group hide-on-leave>
@@ -219,7 +219,7 @@
                                     <div v-else>
                                         <v-dialog width="600" v-model="dialog">
                                             <template v-slot:activator="{ on }">
-                                                <v-btn color="primary" v-on="on"
+                                                <v-btn color="primary" v-on="on" :disabled="sending"
                                                 >
                                                     Saada uuesti meilile
                                                     <v-fade-transition group hide-on-leave>
@@ -447,9 +447,9 @@
 
                 if (filter.kiitus) {
                     this.val.text = filter.kiitus.kiituskiri;
-                } else {
-                    this.loadPicture();
                 }
+
+                this.loadPicture();
 
             },
 

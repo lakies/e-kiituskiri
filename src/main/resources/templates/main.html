@@ -86,7 +86,7 @@
                                                     v-model="klass.nr"
                                                     type="number"
                                                     min="1"
-                                                    max="9"
+                                                    max="12"
                                             ></v-text-field>
                                         </v-col>
                                         <v-col cols="3" class="pb-0">
@@ -354,6 +354,13 @@
 
         computed: {
             tahised() {
+                if (this.kool === "pk") {
+                    if (this.klass.nr < 10) {
+                        return ["p", "t", "a", "b", "c", "d", "e"]
+                    } else {
+                        return ["r","m","k","h"]
+                    }
+                }
                 return this.koiktahised[this.kool];
             },
 
@@ -380,6 +387,10 @@
                 let ts = this.students.filter(value => value.id === this.selected);
 
                 return !(ts.length !== 1 || ts[0].kiitus === null || !ts[0].kiitus.saadetud);
+            },
+
+            filteredLabels() {
+
             }
         },
 
